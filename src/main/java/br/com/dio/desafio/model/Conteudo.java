@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class ConteudoResponseDTO {
+public abstract class Conteudo {
     protected static final double XP_PADRAO = 10;
 
     private String titulo;

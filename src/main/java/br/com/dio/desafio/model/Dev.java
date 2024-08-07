@@ -13,31 +13,29 @@ import java.util.Set;
 public class Dev {
 
     private String nome;
-    private Set<ConteudoResponseDTO> conteudosInscritos = new LinkedHashSet<>();
-    private Set<ConteudoResponseDTO> conteudosConcluidos = new LinkedHashSet<>();
+    private Set<Conteudo> conteudosInscritos = new LinkedHashSet<>();
+    private Set<Conteudo> conteudosConcluidos = new LinkedHashSet<>();
 
-    public  void inscreverBootcamp(Bootcamp bootcamp){
-
+    public void inscreverBootcamp(Bootcamp bootcamp) {
         this.conteudosInscritos.addAll(bootcamp.getConteudos());
         bootcamp.getDevsInscritos().add(this);
     }
-    public void progredir(){
-        Optional<ConteudoResponseDTO> conteudo = this.conteudosInscritos.stream().findFirst();
-        if (conteudo.isPresent()){
-            this.conteudosConcluidos.add(conteudo.get());
-            this.conteudosInscritos.remove(conteudo.get());
-        }else {
-            System.out.println("Você não esta matriculado em nenhum conteudo");
-        }
+
+    public void progredir() {
+        Optional<Conteudo> conteudo = this.conteudosInscritos.stream().findFirst();
+        conteudo.ifPresentOrElse(c -> {
+            this.conteudosConcluidos.add(c);
+            this.conteudosInscritos.remove(c);
+        }, () -> System.out.println("Você não está matriculado em nenhum conteúdo"));
     }
 
-    public double calcularTotalXp(){
-        return this.conteudosConcluidos
-                .stream()
-                .mapToDouble(conteudo -> conteudo.calcularXp())
-                .sum();
+    public double calcularTotalXp() {
+        return this.conteudosConcluidos.stream().mapToDouble(Conteudo::calcularXp).sum();
     }
 
-
+    public double calcularProgresso() {
+        int totalConteudos = conteudosInscritos.size() + conteudosConcluidos.size();
+        return (totalConteudos == 0) ? 0 : (double) conteudosConcluidos.size() / totalConteudos * 100;
     }
+}
 
